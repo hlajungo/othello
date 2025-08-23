@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
 
-set (TEST_PROJECT "hello")
+set (TEST_PROJECT "orthello")
 set (TEST_PROJECT_SUFFIX "test")
 project (${TEST_PROJECT}_${TEST_PROJECT_SUFFIX} LANGUAGES CXX)
 
@@ -19,8 +19,8 @@ include (../cmake/CPM.cmake)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
-set (CMAKE_EXPORT_COMPILE_COMMANDS ON) # outputting to the file
-                                       # "build/compile_commands.json"
+# outputting to the file "build/compile_commands.json"
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 
 
 # ---- Package ----
@@ -35,7 +35,7 @@ if (TEST_INSTALLED_VERSION)
   find_package (${TEST_PROJECT} CONFIG REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../install/project)
 else ()
   # 這會在當前文件插入 ../CMakeLists.txt，意味著加入 target ${TEST_PROJECT}
-  CPMAddPackage (NAME ${TEST_PROJECT} SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../my_project)
+  CPMAddPackage (NAME ${TEST_PROJECT} SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../orthello)
 endif ()
 
 # ---- Create binary ----

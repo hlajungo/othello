@@ -22,8 +22,8 @@ if (HELLO_INSTALLED_VERSION)
 else ()
   # "CPMAddPackage" for adding source code
   CPMAddPackage(
-    NAME hello
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../my_project
+    NAME orthello
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../orthello
   )
 endif ()
 
@@ -49,9 +49,11 @@ file (
 
 add_executable (${PROJECT_NAME} ${sources})
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
+
 set_target_properties (${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 
-target_link_libraries (${PROJECT_NAME} hello::hello cxxopts)
+target_link_libraries (${PROJECT_NAME} orthello::orthello cxxopts)
 
 install (
   TARGETS ${PROJECT_NAME}

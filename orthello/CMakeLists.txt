@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.28.3)
-project (hello VERSION 1.0.0 LANGUAGES CXX)
+project (orthello VERSION 1.0.0 LANGUAGES CXX)
 
 if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message (
@@ -12,16 +12,16 @@ endif ()
 
 # qt6: uic system for changing "*.ui" to "ui_*.h"
 
-set (CMAKE_AUTOUIC ON)
+#set (CMAKE_AUTOUIC ON)
 
 # qt6: qt moc system for dealing Q_OBJECT class
 
-set (CMAKE_AUTOMOC ON)
+#set (CMAKE_AUTOMOC ON)
 
 # qt6: resource compiler for dealing "*.qrc" file and package resource into
 # binary
 
-set (CMAKE_AUTORCC ON)
+#set (CMAKE_AUTORCC ON)
 
 # c++20: init
 
@@ -50,6 +50,7 @@ file (
   headers
   CONFIGURE_DEPENDS
   "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
 )
 
 # c++ sources: source/...
@@ -70,13 +71,15 @@ file (
   "${CMAKE_CURRENT_SOURCE_DIR}/source/*.ixx"
 )
 
-# qt6: library
+# qt6: find library
 
 #find_package (Qt6 REQUIRED COMPONENTS Core Widgets)
 
 # ---- Compile
 
 add_library (${PROJECT_NAME} ${sources})
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
 
 
 target_include_directories (

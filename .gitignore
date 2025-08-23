@@ -1,5 +1,12 @@
-/build*
+# compiled stuff
+/build
+/install
+
+# macOS trash
+.DS_Store
+
+# ctags
+**/tags
+
 /.vscode
 /cpm_modules
-.DS_Store
-**/tags
