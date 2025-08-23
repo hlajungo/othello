@@ -1,0 +1,45 @@
+name: Windows
+
+on:
+  workflow_dispatch:
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
+  CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: Install dependencies
+        run: |
+          choco install ninja -y
+          choco install cmake -y
+
+      - name: configure
+        run: cmake -S ./test -B ./build/test -G "Ninja" \
+          -DCMAKE_INSTALL_PREFIX=./install \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_C_COMPILER=$CC \
+          -DCMAKE_CXX_COMPILER=$CXX
+
+      - name: build
+        run: cmake --build ./build/test --parallel 4
+
+      - name: test
+        run: ctest --test-dir ./build/test --build-config Debug
+
+      #- name: collect code coverage
+        #run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+
+
+
+

@@ -1,0 +1,8 @@
+#pragma once
+
+#define HELLO_VERSION "1.0.0"
+
+#define HELLO_VERSION_MAJOR 1
+#define HELLO_VERSION_MINOR 0
+#define HELLO_VERSION_PATCH 0
+#define HELLO_VERSION_TWEAK 0

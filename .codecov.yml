@@ -1,0 +1,20 @@
+codecov:
+  require_ci_to_pass: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  status:
+    project:
+      default:
+        target: auto
+    patch:
+      default:
+        target: auto
+
+ignore:
+  - "/usr/include/*"
+  - "test/*"        # 若你不想計算 test 的 coverage，可選擇性加入
+  - "build/*"       # 排除 build folder
+

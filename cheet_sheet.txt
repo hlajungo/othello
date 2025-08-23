@@ -1,0 +1,20 @@
+cmake -S my_project -B build/project
+cmake --build build/project
+cmake --install build/project --prefix ./install/project
+
+
+cmake -S standalone/ -B build/standalone
+cmake --build build/standalone
+cmake --install build/standalone/ --prefix ./install/standalone
+
+cmake -S test/ -B build/test
+cmake --build build/test
+ctest --test-dir ./build/test --output-on-failure
+
+cmake -S documentation/ -B build/documentation
+cmake --build build/documentation --target GenerateDocs
+open build/documentation/doxygen/html/index.html
+
+
+ctags -R --langmap=c++:+.cu .
+

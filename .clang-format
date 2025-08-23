@@ -1,0 +1,41 @@
+BasedOnStyle: GNU
+IndentWidth: 2 # 2 space for indent
+UseTab: Never  # No Tab
+BreakBeforeBraces: Allman
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterFunction: true
+  AfterEnum: true
+  AfterStruct: true
+  AfterNamespace: true
+  AfterObjCDeclaration: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+ColumnLimit: 80  # 最長行
+
+
+BinPackParameters: false  # 所有 參數 不擠一行
+BinPackArguments: false  # 所有 呼叫 不擠一行
+
+  # "T *" -> "T*"
+  # "T &" -> "T&"
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+  # all lambda new line
+AllowShortLambdasOnASingleLine: false
+
+  # template new line
+AlwaysBreakTemplateDeclarations: Yes
+
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AlwaysBreakAfterReturnType: All  # 強制 return type 另起一行
+AlwaysBreakBeforeMultilineStrings: true
+
+AllowShortIfStatementsOnASingleLine: false
