@@ -1,0 +1,60 @@
+
+
+# 生成數據庫，沒有去重
+512	db5
+512	db6
+512	db7
+4.0K	db8
+12K	db9
+68K	db10
+432K	db11
+3.0M	db12
+23M	db13
+188M	db14
+1.6G	db15
+15G	db16
+
+5 bits use 0.000600141 s
+6 bits use 0.000114788 s
+7 bits use 0.000132497 s
+8 bits use 0.000263555 s
+9 bits use 0.000936369 s
+10 bits use 0.00571057 s
+11 bits use 0.0360301 s
+12 bits use 0.177984 s
+13 bits use 1.22941 s
+14 bits use 10.1229 s
+15 bits use 88.4206 s
+16 bits use 798.199 s
+
+
+# 生成數據庫，有去重，吃太多 RAM，只跑到 15 bits。
+512	db5
+512	db6
+512	db7
+4.0K	db8
+12K	db9
+56K	db10
+336K	db11
+2.1M	db12
+14M	db13
+91M	db14
+226M	db15
+
+5 bits use 0.000243599 s
+6 bits use 0.000163226 s
+7 bits use 0.000194584 s
+8 bits use 0.000408249 s
+9 bits use 0.00178605 s
+10 bits use 0.00818454 s
+11 bits use 0.055088 s
+12 bits use 0.33588 s
+13 bits use 2.85494 s
+14 bits use 22.7698 s
+15 bits use 213.511 s
+
+
+
+
+
+

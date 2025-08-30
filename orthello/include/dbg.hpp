@@ -1,30 +1,14 @@
 #pragma once
 #include <iostream>
-#include <vector>
+
+#include <type.hpp>
+#include <cassert>
 
 #ifdef DEBUG
 #define DOUT std::cout
 #else
 #define DOUT 0 && std::cout
 #endif
-
-/*
-#ifdef DEBUG
-#define DOUT std::cout
-#else
-struct Dummy
-{
-  template <typename T>
-  Dummy&
-  operator<< (const T&)
-  {
-    return *this;
-  }
-};
-Dummy DOUT;
-#endif
-*/
-
 
 template <typename T>
 void
@@ -104,4 +88,19 @@ prinTector_tuples (const std::vector<std::tuple<Args...> >& vec)
   {
     print_tuple (t);
   }
+}
+
+inline void
+DOUT_bitboard (uint64_t bitboard)
+{
+  std::bitset<64> binary (bitboard);
+  for (int i = 63; i >= 0; --i)
+  {
+    DOUT << binary[i];
+    if (i % 8 == 0)
+    {
+      DOUT << "\n";
+    }
+  }
+  DOUT << "\n";
 }

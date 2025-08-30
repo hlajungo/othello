@@ -2,6 +2,8 @@
 #include <exception>
 #include <string>
 #include <vector>
+#include <bitset>
+#include <cstdint>
 
 #ifdef SINGLE_PRECISION
 using real_t = float;

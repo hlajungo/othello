@@ -8,5 +8,12 @@
 # ctags
 **/tags
 
+# database
+/test/fixture
+/db
+
+# doctest / unittest
+/Testing
+
 /.vscode
 /cpm_modules

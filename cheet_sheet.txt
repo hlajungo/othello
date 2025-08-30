@@ -8,9 +8,23 @@ cmake -S standalone/ -B build/standalone
 cmake --build build/standalone
 cmake --install build/standalone/ --prefix ./install/standalone
 
+#
+# TEST
+
 cmake -S test/ -B build/test
 cmake --build build/test
 ctest --test-dir ./build/test --output-on-failure
+
+# ls unittest
+ctest -N --test-dir ./build/test/
+
+# run unittest with regex, like this will run `*Database*`
+ctest -R Database
+# run unittest with id
+ctest -I 1,2
+
+#
+# DOCUMENTATION
 
 cmake -S documentation/ -B build/documentation
 cmake --build build/documentation --target GenerateDocs
