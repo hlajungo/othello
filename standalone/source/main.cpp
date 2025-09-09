@@ -1,7 +1,7 @@
 #include <fs_util.hpp>
+#include <game.hpp>
 #include <hash.hpp>
 #include <move.hpp>
-#include <game.hpp>
 #include <type.hpp>
 
 /*
@@ -44,8 +44,10 @@ main ()
       0b0000000000000000000000000001000000000000000000000000000000000000,
       false);
 
-  Game_impl<Game_ctx, Zobrist_hash_impl<Hash_ctx> > game_impl (game_ctx_5, hash_impl);
+  Game_impl<Game_ctx, Zobrist_hash_impl<Hash_ctx> > game_impl (game_ctx_5,
+                                                               hash_impl);
   // 16 子(包含)以下使用查 db
+  // db 路徑, db prefix, 16 子解答
   auto legality = game_impl.is_legal ("./db", "db", 16);
   if (legality == true)
   {

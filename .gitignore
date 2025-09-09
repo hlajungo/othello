@@ -15,5 +15,6 @@
 # doctest / unittest
 /Testing
 
+/.cache
 /.vscode
 /cpm_modules
