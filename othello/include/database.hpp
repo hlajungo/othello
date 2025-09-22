@@ -200,3 +200,4 @@ public:
   Move_impl& move_impl;
   Hash_impl& hash_impl;
 };
+

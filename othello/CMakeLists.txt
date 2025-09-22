@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.28.3)
-project (orthello VERSION 1.0.0 LANGUAGES CXX)
+project (othello VERSION 1.0.0 LANGUAGES CXX)
 
 if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message (

@@ -6,116 +6,8 @@
 
 #include <dbg.hpp>
 #include <fs_util.hpp>
+#include <move.hpp>
 #include <type.hpp>
-
-class Observer
-{
-public:
-  virtual ~Observer () = default;
-  virtual void
-  update ()
-      = 0;
-};
-
-template <typename Game_ctx>
-class Game_cache : public Observer
-{
-public:
-  explicit Game_cache (const Game_ctx& game_ctx) : game_ctx (game_ctx) {}
-
-  void
-  update () override
-  {
-    need_update = true;
-  }
-
-  uint64_t
-  get_empty ()
-  {
-    if (need_update)
-    {
-      need_update = false;
-      empty_mask = ~(game_ctx.black | game_ctx.white);
-    }
-    return empty_mask;
-  }
-
-  int
-  get_piece_num ()
-  {
-    if (need_update)
-    {
-      need_update = false;
-      piece_num = __builtin_popcountll (game_ctx.black | game_ctx.white);
-    }
-    return piece_num;
-  }
-
-private:
-  const Game_ctx& game_ctx; // Strongly bound resource
-  bool need_update = true;
-
-  // data to cached
-  uint64_t empty_mask;
-  int piece_num;
-};
-
-class Game_ctx
-{
-private:
-  // observer impl
-  std::vector<Observer*> observer_1d;
-
-  void
-  notify ()
-  {
-    for (auto* obs : observer_1d)
-    {
-      obs->update ();
-    }
-  }
-
-public:
-  void
-  add_observer (Observer* obs)
-  {
-    observer_1d.push_back (obs);
-  }
-
-public:
-  // variable and setter
-  Game_ctx (const uint64_t black,
-            const uint64_t white,
-            const bool is_black_move)
-      : black (black), white (white), is_black_move (is_black_move){};
-
-  uint64_t black; // bitboard for black
-  uint64_t white; // bitboard for white
-  bool is_black_move; // the one to move
-                      //
-  void
-  set_black (const uint64_t black)
-  {
-    this->black = black;
-    notify ();
-  }
-
-  void
-  set_white (const uint64_t white)
-  {
-    this->white = white;
-    notify ();
-  }
-
-  void
-  set_is_black_move (const uint64_t is_black_move)
-  {
-    this->is_black_move = is_black_move;
-    notify ();
-  }
-
-  Game_cache<Game_ctx>* cache_ptr = nullptr;
-};
 
 template <typename Game_ctx, typename Hash_impl>
 class Game_impl
@@ -192,10 +84,34 @@ public:
 
 
   bool
-  is_finish()
+  is_end()
   {
 
   }
+
+
+  void
+  try_play (Game_ctx& game_ctx, const int pos)
+  {
+    uint64_t moveable_mask = 0;
+    get_moveable_mask (moveable_mask, game_ctx);
+    // pos is vaild
+    if (moveable_mask & (1ull << pos))
+    {
+      Flip_ctx flip_ctx;
+      get_flip_ctx (flip_ctx, pos, game_ctx);
+      if (flip_ctx.flip_mask != 0)
+      {
+        flip (game_ctx, flip_ctx);
+      }
+    }
+    // pos is invaild
+    else
+    {
+      std::cerr << "error: A invaild play played";
+    }
+  }
+
 
 public:
   Game_impl (Game_ctx& game_ctx, Hash_impl& hash_impl)

@@ -18,8 +18,8 @@ flags = [
         '-Wno-variadic-macros',
         '-fexceptions',
         '-ferror-limit=10000' ,
-        '-I', DirectoryOfThisScript() + '/orthello/include',
-        '-I', DirectoryOfThisScript() + '/orthello/source',
+        '-I', DirectoryOfThisScript() + '/othello/include',
+        '-I', DirectoryOfThisScript() + '/othello/source',
         '-I', DirectoryOfThisScript() + '/build/test/_deps/doctest-src',
         ]
 

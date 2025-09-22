@@ -11,7 +11,7 @@ main ()
   Move_impl move_impl;
   Database<Move_impl, Zobrist_hash_impl<Hash_ctx>> db(move_impl, hash);
 
-  // generate db5 to db9, number is the disc on board.
+  // generate ./go/db5 to ./go/db9, number suffix is the piece on board.
   auto ret = db.gen_database("./go", "db", 5, 9, false);
   if (ret != 0)
   {

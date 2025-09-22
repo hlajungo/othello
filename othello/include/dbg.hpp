@@ -1,8 +1,10 @@
 #pragma once
 #include <iostream>
+#include <vector>
 
-#include <type.hpp>
+#include <cstdint>
 #include <cassert>
+//#include <type.hpp>
 
 #ifdef DEBUG
 #define DOUT std::cout

@@ -1,8 +1,8 @@
 # cmake work
 
-cmake -S orthello -B build/orthello
-cmake --build build/orthello
-cmake --install build/orthello --prefix ./install/orthello
+cmake -S othello -B build/othello
+cmake --build build/othello
+cmake --install build/orthello --prefix ./install/othello
 
 cmake -S standalone/ -B build/standalone
 cmake --build build/standalone
