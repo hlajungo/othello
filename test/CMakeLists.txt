@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
 
-set (TEST_PROJECT "orthello")
+set (TEST_PROJECT "othello")
 set (TEST_PROJECT_SUFFIX "test")
 project (${TEST_PROJECT}_${TEST_PROJECT_SUFFIX} LANGUAGES CXX)
 
@@ -35,7 +35,7 @@ if (TEST_INSTALLED_VERSION)
   find_package (${TEST_PROJECT} CONFIG REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../install/project)
 else ()
   # 這會在當前文件插入 ../CMakeLists.txt，意味著加入 target ${TEST_PROJECT}
-  CPMAddPackage (NAME ${TEST_PROJECT} SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../orthello)
+  CPMAddPackage (NAME ${TEST_PROJECT} SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../othello)
 endif ()
 
 # ---- Create binary ----

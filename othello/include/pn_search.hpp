@@ -14,9 +14,9 @@ struct PNNode
   uint64_t disproof_number;
   std::vector<std::unique_ptr<PNNode> > children;
   PNNode* parent;
-  Game_ctx state;
+  Position state;
 
-  PNNode (NodeType t, const Game_ctx& s, PNNode* p = nullptr)
+  PNNode (NodeType t, const Position& s, PNNode* p = nullptr)
       : type (t), proof_number (1), disproof_number (1), parent (p), state (s)
   {
   }
@@ -87,7 +87,7 @@ struct PNNode
 //expand_node (PNNode* node)
 //{
   //// 產生所有合法走法 (你要實作 Othello move generator)
-  //std::vector<Game_ctx> next_states = generate_moves (node->state);
+  //std::vector<Position> next_states = generate_moves (node->state);
 
   //for (auto& s : next_states)
   //{

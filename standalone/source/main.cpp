@@ -31,7 +31,7 @@ popcount (unsigned long long b)
 #endif
 
 void
-fn (bool is_legal, const std::string& db_path, const Game_ctx& game_ctx);
+fn (bool is_legal, const std::string& db_path, const Position& game_ctx);
 
 int
 main ()
@@ -39,12 +39,12 @@ main ()
   Hash_ctx hash_ctx (SEED);
   Zobrist_hash_impl<Hash_ctx> hash_impl (hash_ctx);
   // 局面上有 5 子
-  Game_ctx game_ctx_5 (
+  Position game_ctx_5 (
       0b0000000000000000000000000000100000011100000000000000000000000000,
       0b0000000000000000000000000001000000000000000000000000000000000000,
       false);
 
-  Game_impl<Game_ctx, Zobrist_hash_impl<Hash_ctx> > game_impl (game_ctx_5,
+  Game_impl<Position, Zobrist_hash_impl<Hash_ctx> > game_impl (game_ctx_5,
                                                                hash_impl);
   // 16 子(包含)以下使用查 db
   // db 路徑, db prefix, 16 子解答
@@ -59,7 +59,7 @@ main ()
   }
 
   // 局面上有 15 子
-  Game_ctx game_ctx_15 (
+  Position game_ctx_15 (
       0b0000000000100000001100000001100000111100001000000000000000000000,
       0b0000000000000000010000000010010000000000000110000000000000000000,
       false);

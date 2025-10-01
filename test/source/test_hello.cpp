@@ -1,72 +1,111 @@
-#include <filesystem>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 // #include <doctest.h>
 
 #include <doctest/doctest.h>
 
+#include <fs_util.hpp>
 #include <game.hpp>
 #include <hash.hpp>
 #include <move.hpp>
 
-#include <database.hpp>
+#include <generator.hpp>
 
 // #include <iostream>
 // #include <sstream>
 // #include <streambuf>
 
-/*
-TEST_CASE ("Hello")
-{
-  // 儲存原始 cout buffer
-  std::streambuf* old_buf = std::cout.rdbuf ();
-
-  // 準備攔截的輸出流
-  std::ostringstream captured_output;
-  std::cout.rdbuf (captured_output.rdbuf ()); // 將 cout 輸出轉向 stringstream
-
-  // 呼叫被測函數
-  hello_from_template ();
-
-  // 還原 cout，避免後續攔截
-  std::cout.rdbuf (old_buf);
-
-  // 比對輸出
-  CHECK (captured_output.str () == "Hello from template!\n");
-}
-*/
-
-/*
- * @test Test class `Move` function `get_move` and `get_flipped_mask`
- *
- * Checking where can black go, and if black go, what will be flipped.
+/* @brief Test Position
+ * It will test default function and helper functions
  */
-TEST_CASE ("Move")
+TEST_CASE ("Position")
 {
+  uint64_t black = (get_mask (4, 3) | get_mask (3, 4));
+  uint64_t white = (get_mask (3, 3) | get_mask (4, 4));
+  /* Test constructor
+   */
+  Position pos ({ { 4, 3 }, { 3, 4 } }, { { 3, 3 }, { 4, 4 } }, true);
+  CHECK (pos.get_black () == black);
+  CHECK (pos.get_white () == white);
+  CHECK (pos.get_is_black_move () == true);
+  /* Test copy constructor
+   */
+  Position pos2 (pos);
+  CHECK (pos2.get_black () == black);
+  CHECK (pos2.get_white () == white);
+  CHECK (pos2.get_is_black_move () == true);
+  /* Test copy assignment
+   */
+  Position pos3 = pos;
+  CHECK (pos3.get_black () == black);
+  CHECK (pos3.get_white () == white);
+  CHECK (pos3.get_is_black_move () == true);
+  /* Test helper function
+   */
+  CHECK (pos.get_player () == black);
+  CHECK (pos.get_opponent () == white);
+  CHECK (pos.get_empty () == ~(black | white));
+  CHECK (pos.get_piece_num () == 4);
+
+  Position pos4 (
+      { { 4, 3 }, { 3, 4 }, { 5, 5 } }, { { 3, 3 }, { 4, 4 } }, true);
+  CHECK (pos.get_score () == 0);
+  CHECK (pos4.get_score () == 1);
+}
+
+/*
+ * @brief Test get_moveable_mask, get_flip_ctx_1d and flip
+ * It will trying a pos, do a flip based on get_moveable_mask
+ */
+TEST_CASE ("Flip_1")
+{
+  Position pos (0b00000000000000000000000000000000000000000000000000000001ull,
+                0b00000000000000000000000000000000000000000000000001111110ull,
+                true);
+
   Move_impl move_impl;
-
-  Game_ctx game_ctx_init (
-      0b00000000000000000000000000000000000000000000000000000001ull,
-      0b00000000000000000000000000000000000000000000000001111110ull,
-      true);
-
-  uint64_t moveable_mask = 0;
-  move_impl.get_move (moveable_mask, game_ctx_init);
+  uint64_t moveable_mask = move_impl.get_moveable_mask (pos);
 
   // the position black can play
   CHECK (moveable_mask == 0b10000000);
 
-  array_1d_t<Flip_ctx> move_1d;
-  move_impl.get_flipped_mask (move_1d, moveable_mask, game_ctx_init);
+  array_1d_t<Flip_ctx> flip_ctx_1d
+      = move_impl.get_flip_ctx_1d (pos, moveable_mask);
 
+  CHECK (flip_ctx_1d.size () == 1);
   // the position black played
-  CHECK (move_1d[0].square == 7);
+  CHECK (flip_ctx_1d[0].square == 7);
   // after play, what will be flipped
-  CHECK (move_1d[0].flip_mask == 0b01111110);
+  CHECK (flip_ctx_1d[0].flip_mask == 0b01111110);
+
+  move_impl.flip (pos, flip_ctx_1d[0]);
+  CHECK (pos.black
+         == 0b00000000000000000000000000000000000000000000000011111111ull);
+  CHECK (pos.white
+         == 0b00000000000000000000000000000000000000000000000000000000ull);
+  CHECK (pos.is_black_move == false);
 }
 
 /*
- * @test Test class `Hash_ctx` constructor and class `Zobrist_hash_impl`
- * function `hash_position`.
+ * @brief Test try_play
+ * It will trying to play. When fail, return 1, when success, return 0, and pos is flipped.
+ */
+TEST_CASE ("Flip_2")
+{
+  Move_impl move_impl;
+  Position pos (0b00000000000000000000000000000000000000000000000000000001ull,
+                0b00000000000000000000000000000000000000000000000001111110ull,
+                true);
+  CHECK (1 == move_impl.try_play (pos, 1));
+  CHECK (0 == move_impl.try_play (pos, 7));
+  CHECK (pos.black
+         == 0b00000000000000000000000000000000000000000000000011111111ull);
+  CHECK (pos.white
+         == 0b00000000000000000000000000000000000000000000000000000000ull);
+  CHECK (pos.is_black_move == false);
+}
+
+/*
+ * @brief Testing hashing position
  *
  * The seed is 20250821, if seed changed, test will not pass.
  *
@@ -76,32 +115,30 @@ TEST_CASE ("Hash_ctx, Zobrist_hash_impl")
   Hash_ctx hash_ctx (SEED);
   Zobrist_hash_impl<Hash_ctx> hash (hash_ctx);
 
-  Game_ctx game_ctx_init ((1ull << (8 * 3 + 4)) | (1ull << (8 * 4 + 3)),
-                          (1ull << (8 * 3 + 3)) | (1ull << (8 * 4 + 4)),
-                          true);
+  Position pos_init ((1ull << (8 * 3 + 4)) | (1ull << (8 * 4 + 3)),
+                     (1ull << (8 * 3 + 3)) | (1ull << (8 * 4 + 4)),
+                     true);
 
-  uint64_t hash_num = 0;
-  hash.hash_position (hash_num, game_ctx_init);
+  uint64_t hash_num = hash.hash_position (pos_init);
 
-  // hash number by seed 20250821
+  // by seed 20250821
   CHECK (hash_num == 7872878270880865676);
 }
 
 /*
- * @test Test class `Database` function `gen_database`
+ * @test Test class `Pos_gen` function `gen_database`
  *
  * Trying to generate a database with all possible 5 piece, then compare it with
  * ans file `db5`.
  *
  */
-
-TEST_CASE ("Database")
+TEST_CASE ("Pos_gen")
 {
   Hash_ctx hash_ctx (SEED);
   Zobrist_hash_impl<Hash_ctx> hash_impl (hash_ctx);
 
   Move_impl move_impl;
-  Database<Move_impl, Zobrist_hash_impl<Hash_ctx> > db (move_impl, hash_impl);
+  Pos_gen<Move_impl, Zobrist_hash_impl<Hash_ctx> > db (move_impl, hash_impl);
 
   // test dir
   std_fs::path test_dir = std_fs::path (__FILE__).parent_path ().parent_path ();
@@ -111,13 +148,13 @@ TEST_CASE ("Database")
 
   // db output dir
   std_fs::path db_path = test_dir / "test_piece_db";
-  try_create_dir (db_path);
+  fs_util.try_mkdir (db_path);
 
   auto ret = db.gen_database (db_path.string (), "db", 5, 5, false);
   REQUIRE (ret == 0);
 
-  CHECK (
-      is_file_equal ((ans_dir / "db5").string (), (db_path / "db5").string ()));
+  CHECK (fs_util.is_file_equal ((ans_dir / "db5").string (),
+                                (db_path / "db5").string ()));
 }
 
 /*
@@ -127,7 +164,7 @@ TEST_CASE ("Database")
 
 TEST_CASE ("Game_impl is_legal")
 {
-  // test dir
+  // test root dir
   std_fs::path test_dir = std_fs::path (__FILE__).parent_path ().parent_path ();
 
   // ans dir (fixture dir)
@@ -137,24 +174,24 @@ TEST_CASE ("Game_impl is_legal")
   Zobrist_hash_impl<Hash_ctx> hash_impl (hash_ctx);
 
   // legal position with 5 piece, it should use db5
-  Game_ctx game_ctx_5 (
+  Position pos_piece_5 (
       0b0000000000000000000000000000100000011100000000000000000000000000,
       0b0000000000000000000000000001000000000000000000000000000000000000,
       false);
+  using Game = Game_impl<Position, Zobrist_hash_impl<Hash_ctx> >;
 
-  Game_impl<Game_ctx, Zobrist_hash_impl<Hash_ctx> > game_impl (game_ctx_5,
-                                                               hash_impl);
-  auto legality = game_impl.is_legal (ans_dir.string(), "db", 16);
+  Game game (pos_piece_5, hash_impl);
+  auto legality = game.is_legal (ans_dir.string (), "db");
   CHECK (legality == true);
 
   // legal position with 15 piece, it should use db15
-  Game_ctx game_ctx_15 (
+  Position pos_piece_15 (
       0b0000000000100000001100000001100000111100001000000000000000000000,
       0b0000000000000000010000000010010000000000000110000000000000000000,
       false);
 
-  game_impl.game_ctx = game_ctx_15;
-  legality = game_impl.is_legal (ans_dir.string (), "db", 16);
+  game.pos = pos_piece_15;
+  legality = game.is_legal (ans_dir.string (), "db");
   CHECK (legality == true);
 }
 
